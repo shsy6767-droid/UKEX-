@@ -3,179 +3,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UKEX Digital Bank</title>
+  <title>UKEX | Premium Banking & Amex Experience</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-          colors: {
-            lloyds: {
-              green: '#006A4E',
-              darkGreen: '#004B36',
-              mint: '#00A86B',
-              accent: '#84BD00',
-              bg: '#F3F6F5',
-              card: '#FFFFFF'
-            },
-            amex: {
-              silver: '#E5E7EB',
-              slate: '#1E293B',
-              blue: '#006FCF',
-              gold: '#D4AF37'
-            }
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            serif: ['Cinzel', 'serif']
           },
-          boxShadow: {
-            'lloyds': '0 10px 30px -5px rgba(0, 106, 78, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03)',
-            'amex': '0 20px 40px -15px rgba(30, 41, 59, 0.25)'
+          colors: {
+            ukex: {
+              navy: '#0A1128',
+              slate: '#1E293B',
+              platinum: '#E2E8F0',
+              gold: '#D4AF37',
+              goldDark: '#997A15',
+              green: '#006A4E',
+              mint: '#00A86B',
+              bg: '#F8FAFC'
+            }
           }
         }
       }
     }
   </script>
   <style>
-    body { background-color: #F3F6F5; color: #1E293B; overflow-x: hidden; }
-    .glass-light { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(0, 106, 78, 0.1); }
-    .amex-card-bg { background: linear-gradient(135deg, #1E293B 0%, #334155 50%, #0F172A 100%); }
+    body { background-color: #F8FAFC; color: #0F172A; overflow-x: hidden; }
+    
+    /* Authentic Metallic Centurion Card Effect */
+    .amex-metal-card {
+      background: linear-gradient(135deg, #18191D 0%, #2B2D35 35%, #111215 70%, #1F2128 100%);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .amex-[border-pattern] {
+      border: 2px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .amex-glimmer {
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.15) 55%, transparent 60%);
+      background-size: 200% 100%;
+      animation: metallicShimmer 6s infinite linear;
+    }
+
+    @keyframes metallicShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
     .perspective-1000 { perspective: 1000px; }
     .transform-style-3d { transform-style: preserve-3d; }
     .backface-hidden { backface-visibility: hidden; }
     .rotate-y-180 { transform: rotateY(180deg); }
+    
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
   </style>
 </head>
-<body class="font-sans antialiased bg-lloyds-bg text-slate-800 selection:bg-lloyds-green selection:text-white">
+<body class="font-sans antialiased bg-ukex-bg text-slate-900 selection:bg-ukex-gold selection:text-black">
 
-  <!-- AUTH / SIGN UP OVERLAY MODAL (Shown by Default) -->
-  <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+  <!-- AUTH / SIGN UP OVERLAY MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
     <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden relative">
       <!-- Header Banner -->
-      <div class="bg-gradient-to-r from-lloyds-darkGreen via-lloyds-green to-lloyds-mint p-8 text-white relative">
+      <div class="bg-gradient-to-r from-ukex-navy via-slate-900 to-ukex-navy p-8 text-white relative border-b border-ukex-gold/30">
         <div class="flex items-center space-x-3 mb-2">
-          <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-xl text-white">
-            <i class="fa-solid fa-horse-head"></i>
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ukex-gold to-amber-600 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg">
+            <i class="fa-solid fa-crown text-sm"></i>
           </div>
-          <span class="text-2xl font-extrabold tracking-wider">UKEX</span>
+          <span class="text-2xl font-serif font-black tracking-widest text-ukex-gold">UKEX</span>
         </div>
-        <p class="text-xs text-emerald-100 font-medium">By Lloyd-Amex Financial Group</p>
-        <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl"><i class="fa-solid fa-horse-head"></i></div>
+        <p class="text-xs text-slate-300 font-medium">American Express Executive Platinum Member Portal</p>
       </div>
 
       <!-- Auth Form Container -->
       <div class="p-6">
         <!-- Auth Tabs -->
         <div class="flex border-b border-slate-100 mb-6">
-          <button id="signupTabBtn" onclick="toggleAuthMode('signup')" class="pb-3 px-4 font-bold text-sm text-lloyds-green border-b-2 border-lloyds-green w-1/2 text-center">Sign Up</button>
-          <button id="loginTabBtn" onclick="toggleAuthMode('login')" class="pb-3 px-4 font-semibold text-sm text-slate-400 w-1/2 text-center hover:text-slate-600">Log In</button>
+          <button id="signupTabBtn" onclick="toggleAuthMode('signup')" class="pb-3 px-4 font-bold text-sm text-slate-900 border-b-2 border-ukex-gold w-1/2 text-center">New Member</button>
+          <button id="loginTabBtn" onclick="toggleAuthMode('login')" class="pb-3 px-4 font-semibold text-sm text-slate-400 w-1/2 text-center hover:text-slate-600">Sign In</button>
         </div>
 
         <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
           <div id="fullNameGroup">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Full Legal Name</label>
-            <input type="text" id="authName" placeholder="e.g. Lady Sarah Jenkins" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lloyds-green">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Cardmember Name</label>
+            <input type="text" id="authName" placeholder="e.g. Alexander Vance" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-ukex-gold">
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address</label>
-            <input type="email" required id="authEmail" placeholder="sarah@ukex.co.uk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lloyds-green">
+            <input type="email" required id="authEmail" placeholder="vance@ukex-vip.co.uk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-ukex-gold">
           </div>
 
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Passcode / PIN</label>
-            <input type="password" required id="authPass" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lloyds-green">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Security PIN / Passcode</label>
+            <input type="password" required id="authPass" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-ukex-gold">
           </div>
 
-          <button type="submit" id="authSubmitBtn" class="w-full py-3.5 bg-lloyds-green hover:bg-lloyds-darkGreen text-white font-bold text-sm rounded-xl shadow-lg shadow-lloyds-green/20 transition-all">
-            Create Account & Claim Card
+          <button type="submit" id="authSubmitBtn" class="w-full py-3.5 bg-gradient-to-r from-slate-900 via-ukex-navy to-slate-900 hover:opacity-95 text-ukex-gold font-bold text-sm rounded-xl shadow-xl transition-all border border-ukex-gold/30">
+            Activate Amex Centurion Account
           </button>
         </form>
 
-        <p class="text-[11px] text-center text-slate-400 mt-4">Protected by UK Banking Deposit Scheme • FCA Regulated</p>
+        <p class="text-[11px] text-center text-slate-400 mt-4">Protected by UKEX Bank PLC & American Express Global Licensing</p>
       </div>
     </div>
   </div>
 
-  <!-- MAIN APPLICATION FRAME -->
+  <!-- MAIN APPLICATION SHELL -->
   <div class="min-h-screen flex items-center justify-center p-0 md:p-6">
-    <div class="w-full max-w-6xl h-screen md:h-[900px] bg-white md:rounded-[36px] shadow-2xl border border-slate-200/80 overflow-hidden flex flex-col md:flex-row relative">
+    <div class="w-full max-w-6xl h-screen md:h-[900px] bg-white md:rounded-[36px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col md:flex-row relative">
       
-      <!-- LLOYDS GREEN SIDEBAR (Desktop) -->
-      <aside class="hidden md:flex flex-col w-64 bg-lloyds-darkGreen text-white p-6 justify-between z-20">
+      <!-- NAVIGATION SIDEBAR -->
+      <aside class="hidden md:flex flex-col w-64 bg-ukex-navy text-white p-6 justify-between z-20 border-r border-slate-800">
         <div>
           <!-- Logo -->
           <div class="flex items-center space-x-3 mb-10">
-            <div class="w-10 h-10 rounded-xl bg-lloyds-mint text-white flex items-center justify-center shadow-md">
-              <i class="fa-solid fa-horse-head text-lg"></i>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ukex-gold via-amber-400 to-yellow-600 text-slate-950 flex items-center justify-center shadow-lg font-black">
+              <i class="fa-solid fa-crown text-base"></i>
             </div>
             <div>
-              <span class="text-xl font-extrabold tracking-wider">UKEX</span>
-              <span class="block text-[9px] uppercase tracking-widest text-emerald-300 font-semibold">Lloyds • Amex Tier</span>
+              <span class="text-2xl font-serif font-black tracking-widest text-ukex-gold">UKEX</span>
+              <span class="block text-[9px] uppercase tracking-widest text-slate-400 font-semibold">Amex Centurion Tier</span>
             </div>
           </div>
 
-          <!-- Navigation -->
+          <!-- Navigation Links -->
           <nav class="space-y-2">
-            <button onclick="switchTab('dashboard')" class="nav-btn active w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-bold bg-white/10 text-white border-l-4 border-lloyds-accent">
-              <i class="fa-solid fa-house text-base"></i>
+            <button onclick="switchTab('dashboard')" class="nav-btn active w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-bold bg-white/10 text-white border-l-4 border-ukex-gold">
+              <i class="fa-solid fa-table-cells-large text-base text-ukex-gold"></i>
               <span>Dashboard</span>
             </button>
-            <button onclick="switchTab('analytics')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-emerald-100/70 hover:text-white hover:bg-white/5">
-              <i class="fa-solid fa-chart-pie text-base"></i>
-              <span>Insights & Spend</span>
+            <button onclick="switchTab('analytics')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5">
+              <i class="fa-solid fa-chart-line text-base"></i>
+              <span>Spend Analytics</span>
             </button>
-            <button onclick="switchTab('cards')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-emerald-100/70 hover:text-white hover:bg-white/5">
+            <button onclick="switchTab('cards')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5">
               <i class="fa-solid fa-credit-card text-base"></i>
-              <span>Amex Vault Cards</span>
+              <span>Amex Vault & Perks</span>
             </button>
-            <button onclick="openSendModal()" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-emerald-100/70 hover:text-white hover:bg-white/5">
+            <button onclick="openSendModal()" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5">
               <i class="fa-solid fa-paper-plane text-base"></i>
-              <span>Payments</span>
+              <span>Payments & Wire</span>
             </button>
           </nav>
         </div>
 
-        <!-- User Profile Card in Sidebar -->
-        <div class="bg-white/10 p-3 rounded-2xl border border-white/10 flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-amex-gold text-slate-900 font-black flex items-center justify-center text-sm shadow-md" id="userAvatar">
-            SJ
+        <!-- Sidebar Profile Box -->
+        <div class="bg-slate-900/80 p-3 rounded-2xl border border-white/10 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ukex-gold to-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shadow-md" id="userAvatar">
+            AV
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-white truncate" id="userNameDisplay">Sarah Jenkins</h4>
-            <p class="text-[10px] text-emerald-200 truncate">Centurion Member</p>
+            <h4 class="text-xs font-bold text-white truncate" id="userNameDisplay">Alexander Vance</h4>
+            <p class="text-[10px] text-ukex-gold truncate font-semibold">Centurion Black</p>
           </div>
-          <button onclick="logout()" class="text-emerald-300 hover:text-white p-1.5"><i class="fa-solid fa-arrow-right-from-bracket text-xs"></i></button>
+          <button onclick="logout()" class="text-slate-400 hover:text-red-400 p-1.5"><i class="fa-solid fa-power-off text-xs"></i></button>
         </div>
       </aside>
 
-      <!-- MAIN CONTENT WRAPPER -->
-      <main class="flex-1 flex flex-col h-full overflow-hidden bg-lloyds-bg">
+      <!-- CONTENT CONTAINER -->
+      <main class="flex-1 flex flex-col h-full overflow-hidden bg-ukex-bg">
         
         <!-- HEADER -->
-        <header class="h-20 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between z-10 shadow-sm">
+        <header class="h-20 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10">
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-lloyds-green">Private Banking</span>
-            <h2 id="pageTitle" class="text-xl font-extrabold text-slate-800">Account Overview</h2>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Executive Concierge</span>
+            <h2 id="pageTitle" class="text-xl font-extrabold text-slate-900">Financial Overview</h2>
           </div>
 
           <div class="flex items-center space-x-4">
             <!-- Account Selector -->
-            <select id="accountSelect" class="bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 px-3 py-2 rounded-xl focus:outline-none cursor-pointer">
-              <option value="main">Lloyds Premier Current • £54,920.10</option>
-              <option value="amex">Amex Platinum Credit • £15,000.00 Limit</option>
-              <option value="vault">High-Yield Vault • £182,000.00</option>
+            <select id="accountSelect" class="bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 px-3 py-2 rounded-xl focus:outline-none cursor-pointer">
+              <option value="main">AMEX Centurion Charge • £84,920.00</option>
+              <option value="lloyds">UKEX Savings Vault • £150,000.00</option>
+              <option value="crypto">Investment Assets • £42,500.00</option>
             </select>
 
-            <button onclick="openSendModal()" class="hidden md:flex bg-lloyds-green hover:bg-lloyds-darkGreen text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md items-center space-x-2 transition-all">
-              <i class="fa-solid fa-plus"></i>
-              <span>Send Funds</span>
+            <button onclick="openSendModal()" class="bg-slate-900 hover:bg-ukex-navy text-ukex-gold border border-ukex-gold/40 px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center space-x-2 transition-all">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Wire Transfer</span>
             </button>
           </div>
         </header>
@@ -186,73 +201,85 @@
           <!-- TAB 1: DASHBOARD -->
           <div id="dashboardTab" class="space-y-8">
             
-            <!-- TOP ROW: AMEX PLATINUM / LLOYDS CARD & BALANCE -->
+            <!-- TOP GRID: AMEX CENTURION CARD & SUMMARY STATS -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              <!-- AMEX CENTURION STYLE METALLIC CARD (Cols 7) -->
+              <!-- AUTHENTIC AMEX CENTURION CARD (Cols 7) -->
               <div class="lg:col-span-7 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Primary Card</span>
-                  <button onclick="flipCard()" class="text-xs font-bold text-lloyds-green hover:underline flex items-center space-x-1">
+                  <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Active Card</span>
+                  <button onclick="flipCard()" class="text-xs font-bold text-slate-700 hover:text-ukex-gold flex items-center space-x-1">
                     <i class="fa-solid fa-rotate text-[10px]"></i>
                     <span>Flip Card</span>
                   </button>
                 </div>
 
+                <!-- 3D Card Object -->
                 <div class="perspective-1000 w-full h-56 sm:h-64 cursor-pointer" onclick="flipCard()">
-                  <div id="creditCard" class="transform-style-3d duration-700 w-full h-full relative rounded-3xl p-6 flex flex-col justify-between shadow-amex border border-slate-700 amex-card-bg text-white">
+                  <div id="creditCard" class="transform-style-3d duration-700 w-full h-full relative rounded-3xl p-6 flex flex-col justify-between shadow-2xl amex-metal-card text-white border border-slate-700">
                     
-                    <!-- Card Front -->
+                    <div class="amex-glimmer absolute inset-0 rounded-3xl pointer-events-none"></div>
+
+                    <!-- Front Side -->
                     <div class="backface-hidden absolute inset-0 p-6 flex flex-col justify-between rounded-3xl overflow-hidden">
-                      <div class="flex justify-between items-start z-10">
-                        <div>
-                          <p class="text-[10px] font-black tracking-widest uppercase text-slate-400">AMEX Platinum x Lloyds</p>
-                          <h3 class="text-lg font-black tracking-wider text-white">CENTURION VIP</h3>
-                        </div>
-                        <i class="fa-solid fa-horse-head text-white/30 text-2xl"></i>
+                      <!-- Centurion Roman Centurion Officer Icon Background -->
+                      <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-10 text-9xl pointer-events-none">
+                        <i class="fa-solid fa-shield-halved"></i>
                       </div>
 
+                      <div class="flex justify-between items-start z-10">
+                        <div>
+                          <h3 class="font-serif text-lg font-black tracking-widest text-slate-200">AMERICAN EXPRESS</h3>
+                          <p class="text-[9px] font-bold tracking-widest uppercase text-ukex-gold">CENTURION VIP</p>
+                        </div>
+                        <!-- Amex Blue Box Badge -->
+                        <div class="bg-[#006FCF] px-2.5 py-1 rounded text-white font-black text-xs tracking-tighter shadow-md">
+                          AMEX
+                        </div>
+                      </div>
+
+                      <!-- Chip & NFC -->
                       <div class="flex items-center space-x-4 z-10 my-auto">
-                        <div class="w-12 h-9 rounded-lg bg-gradient-to-tr from-amber-200 via-yellow-400 to-amber-500 p-0.5 shadow-md flex items-center justify-center">
-                          <div class="w-full h-full border border-amber-900/30 rounded flex flex-col justify-between p-1">
-                            <div class="h-0.5 bg-amber-900/30 w-full"></div>
-                            <div class="h-0.5 bg-amber-900/30 w-full"></div>
+                        <div class="w-12 h-9 rounded-lg bg-gradient-to-tr from-amber-300 via-yellow-400 to-amber-600 p-0.5 shadow-md flex items-center justify-center">
+                          <div class="w-full h-full border border-amber-900/40 rounded flex flex-col justify-between p-1">
+                            <div class="h-0.5 bg-amber-900/40 w-full"></div>
+                            <div class="h-0.5 bg-amber-900/40 w-full"></div>
                           </div>
                         </div>
                         <i class="fa-brands fa-nfc-symbol text-slate-400 text-xl"></i>
                       </div>
 
+                      <!-- Bottom Details -->
                       <div class="z-10">
-                        <p class="font-mono text-lg sm:text-xl font-bold tracking-widest text-slate-200">
-                          3782 •••••• 01005
+                        <p class="font-mono text-lg sm:text-xl font-bold tracking-widest text-slate-100 drop-shadow">
+                          3759 •••••• 81001
                         </p>
                         <div class="flex justify-between items-end mt-4">
                           <div>
-                            <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">MEMBER SINCE</p>
-                            <p class="text-xs font-extrabold text-white tracking-wide" id="cardHolderName">SARAH JENKINS</p>
+                            <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">CARDMEMBER SINCE</p>
+                            <p class="text-xs font-extrabold text-white tracking-wide" id="cardHolderName">ALEXANDER VANCE</p>
                           </div>
                           <div>
                             <p class="text-[8px] uppercase tracking-wider text-slate-400 font-bold">EXPIRES</p>
-                            <p class="text-xs font-extrabold text-white tracking-wide">12/28</p>
+                            <p class="text-xs font-extrabold text-white tracking-wide">09/29</p>
                           </div>
-                          <div class="bg-amex-blue px-2 py-1 rounded text-[10px] font-black tracking-tighter">
-                            AMEX
-                          </div>
+                          <i class="fa-solid fa-crown text-ukex-gold text-lg"></i>
                         </div>
                       </div>
                     </div>
 
-                    <!-- Card Back -->
-                    <div class="backface-hidden rotate-y-180 absolute inset-0 rounded-3xl bg-slate-900 border border-slate-700 overflow-hidden flex flex-col justify-between py-6">
-                      <div class="w-full h-10 bg-black mt-2"></div>
+                    <!-- Back Side -->
+                    <div class="backface-hidden rotate-y-180 absolute inset-0 rounded-3xl bg-slate-950 border border-slate-800 overflow-hidden flex flex-col justify-between py-6">
+                      <div class="w-full h-10 bg-slate-900 mt-2"></div>
                       <div class="px-6 space-y-2">
                         <div class="bg-slate-800 h-9 rounded flex items-center justify-end px-4">
-                          <span class="font-mono text-xs font-bold tracking-widest text-black bg-white px-2 py-0.5 rounded">CID 8492</span>
+                          <span class="font-mono text-xs font-bold tracking-widest text-slate-900 bg-white px-2 py-0.5 rounded">CVV 4921</span>
                         </div>
-                        <p class="text-[8px] text-slate-400 leading-tight">Issued by UKEX Bank in partnership with American Express and Lloyds Banking Group PLC.</p>
+                        <p class="text-[8px] text-slate-400 leading-tight">This credit card is issued by UKEX Bank PLC pursuant to license by American Express. Unlimited concierge enabled.</p>
                       </div>
                       <div class="px-6 flex justify-between items-center text-[9px] text-slate-400 font-mono">
-                        <span>GLOBAL CONCIERGE: 0800 999 111</span>
+                        <span>CONCIERGE: +44 800 777 999</span>
+                        <span>UKEX-AMEX.COM</span>
                       </div>
                     </div>
 
@@ -260,57 +287,56 @@
                 </div>
               </div>
 
-              <!-- LLOYDS BRIGHT STATS BOX (Cols 5) -->
+              <!-- STATS CARDS (Cols 5) -->
               <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-lloyds flex-1 flex flex-col justify-between relative overflow-hidden">
-                  <div class="absolute top-0 right-0 w-32 h-32 bg-lloyds-mint/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden">
                   <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Net Worth</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Liquid Balance</span>
                     <div class="flex items-baseline space-x-2 mt-2">
-                      <h1 id="mainBalance" class="text-4xl font-black text-slate-900">£54,920.10</h1>
-                      <span class="text-xs font-bold text-lloyds-green bg-emerald-50 px-2 py-1 rounded-md"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+8.4%</span>
+                      <h1 id="mainBalance" class="text-4xl font-black text-slate-900">£84,920.00</h1>
+                      <span class="text-xs font-bold text-ukex-green bg-emerald-50 px-2 py-1 rounded-md"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+12.4%</span>
                     </div>
                   </div>
 
-                  <!-- Quick Actions -->
+                  <!-- Quick Action Buttons -->
                   <div class="grid grid-cols-3 gap-3 mt-6">
-                    <button onclick="openSendModal()" class="py-3 px-2 bg-lloyds-green hover:bg-lloyds-darkGreen rounded-2xl flex flex-col items-center justify-center space-y-1 text-white shadow-md transition-all">
+                    <button onclick="openSendModal()" class="py-3 px-2 bg-slate-900 hover:bg-ukex-navy text-ukex-gold font-bold rounded-2xl flex flex-col items-center justify-center space-y-1 shadow transition-all">
                       <i class="fa-solid fa-paper-plane text-sm"></i>
-                      <span class="text-[11px] font-bold">Pay</span>
+                      <span class="text-[11px]">Send</span>
                     </button>
-                    <button onclick="simulateReceive()" class="py-3 px-2 bg-slate-100 hover:bg-slate-200 rounded-2xl flex flex-col items-center justify-center space-y-1 text-slate-800 transition-all">
-                      <i class="fa-solid fa-qrcode text-lloyds-green text-sm"></i>
-                      <span class="text-[11px] font-bold">Request</span>
+                    <button onclick="simulateReceive()" class="py-3 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl flex flex-col items-center justify-center space-y-1 transition-all">
+                      <i class="fa-solid fa-qrcode text-sm text-ukex-green"></i>
+                      <span class="text-[11px]">Request</span>
                     </button>
-                    <button onclick="switchTab('cards')" class="py-3 px-2 bg-slate-100 hover:bg-slate-200 rounded-2xl flex flex-col items-center justify-center space-y-1 text-slate-800 transition-all">
-                      <i class="fa-solid fa-shield-halved text-amex-blue text-sm"></i>
-                      <span class="text-[11px] font-bold">Perks</span>
+                    <button onclick="switchTab('cards')" class="py-3 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl flex flex-col items-center justify-center space-y-1 transition-all">
+                      <i class="fa-solid fa-gem text-sm text-amber-600"></i>
+                      <span class="text-[11px]">Rewards</span>
                     </button>
                   </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
                   <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg">
-                      <i class="fa-solid fa-crown"></i>
+                      <i class="fa-solid fa-star"></i>
                     </div>
                     <div>
-                      <p class="text-xs font-bold text-slate-800">Amex Membership Rewards</p>
-                      <h4 class="text-sm font-extrabold text-lloyds-green">148,290 Points</h4>
+                      <p class="text-xs font-bold text-slate-800">Amex Reward Points</p>
+                      <h4 class="text-sm font-extrabold text-ukex-gold">249,100 Points</h4>
                     </div>
                   </div>
-                  <button class="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-xl shadow">Redeem</button>
+                  <button class="px-3 py-1.5 bg-slate-900 text-ukex-gold text-xs font-bold rounded-xl shadow">Redeem</button>
                 </div>
               </div>
 
             </div>
 
-            <!-- CHART OVERVIEW -->
-            <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-lloyds space-y-4">
+            <!-- ANALYTICS CHART -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-base font-bold text-slate-800">Monthly Cashflow Analytics</h3>
-                  <p class="text-xs text-slate-400">Lloyds Premier Checking vs Amex Spend</p>
+                  <h3 class="text-base font-bold text-slate-900">Monthly Spending Stream</h3>
+                  <p class="text-xs text-slate-400">AMEX Centurion vs Lloyds Premier Reserve</p>
                 </div>
               </div>
               <div class="h-64 w-full">
@@ -318,11 +344,11 @@
               </div>
             </div>
 
-            <!-- TRANSACTIONS LIST -->
+            <!-- RECENT TRANSACTIONS -->
             <div class="space-y-4">
-              <h3 class="text-base font-bold text-slate-800">Recent Transactions</h3>
+              <h3 class="text-base font-bold text-slate-900">Recent Transactions</h3>
               <div id="transactionList" class="space-y-3">
-                <!-- JS Populated -->
+                <!-- JS populated -->
               </div>
             </div>
 
@@ -330,8 +356,8 @@
 
           <!-- TAB 2: ANALYTICS -->
           <div id="analyticsTab" class="space-y-6 hidden">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-lloyds">
-              <h3 class="text-base font-bold text-slate-800 mb-4">Categorized Expenditure</h3>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+              <h3 class="text-base font-bold text-slate-900 mb-4">Expense Breakdown by Category</h3>
               <div class="h-64 flex items-center justify-center">
                 <canvas id="categoryChart"></canvas>
               </div>
@@ -340,14 +366,14 @@
 
           <!-- TAB 3: CARDS & PERKS -->
           <div id="cardsTab" class="space-y-6 hidden">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-lloyds space-y-4">
-              <h3 class="text-base font-bold text-slate-800">Amex Centurion Concierge Controls</h3>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+              <h3 class="text-base font-bold text-slate-900">Amex VIP Centurion Perks</h3>
               <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center">
                 <div>
-                  <h4 class="text-xs font-bold text-slate-800">Airport Lounge Key Access</h4>
-                  <p class="text-[11px] text-slate-500">Unlimited Priority Pass Active</p>
+                  <h4 class="text-xs font-bold text-slate-900">Global Airport Lounge Collection</h4>
+                  <p class="text-[11px] text-slate-500">Unlimited Centurion Lounge Access Active</p>
                 </div>
-                <span class="px-3 py-1 bg-lloyds-green text-white text-xs font-bold rounded-lg">ACTIVE</span>
+                <span class="px-3 py-1 bg-ukex-green text-white text-xs font-bold rounded-lg">ACTIVE</span>
               </div>
             </div>
           </div>
@@ -358,38 +384,38 @@
   </div>
 
   <!-- SEND MONEY MODAL -->
-  <div id="sendModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all">
+  <div id="sendModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all">
     <div class="bg-white w-full max-w-md p-6 rounded-3xl shadow-2xl border border-slate-100 space-y-6">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-slate-800">Transfer Funds</h3>
+        <h3 class="text-lg font-bold text-slate-900">Execute Wire Transfer</h3>
         <button onclick="closeSendModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="executeTransfer(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Recipient Name / Account</label>
-          <input type="text" required placeholder="e.g. Lloyds Corporate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lloyds-green">
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Recipient Account / IBAN</label>
+          <input type="text" required placeholder="GB98 UKEX 0099..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-ukex-gold">
         </div>
         <div>
           <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Amount (£)</label>
-          <input type="number" step="0.01" required id="transferAmount" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-slate-800 focus:outline-none focus:border-lloyds-green">
+          <input type="number" step="0.01" required id="transferAmount" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-slate-900 focus:outline-none focus:border-ukex-gold">
         </div>
-        <button type="submit" class="w-full py-3.5 bg-lloyds-green text-white font-bold rounded-xl shadow-md hover:bg-lloyds-darkGreen transition-all">Send Instantly</button>
+        <button type="submit" class="w-full py-3.5 bg-slate-900 text-ukex-gold font-bold rounded-xl shadow-md hover:bg-ukex-navy transition-all">Authorize Transfer</button>
       </form>
     </div>
   </div>
 
   <div id="toastContainer" class="fixed top-6 right-6 z-50 space-y-3 pointer-events-none"></div>
 
-  <!-- APPLICATION SCRIPT -->
+  <!-- JAVASCRIPT CODE -->
   <script>
-    let currentBalance = 54920.10;
+    let currentBalance = 84920.00;
     let authMode = 'signup';
-    let user = { name: "Sarah Jenkins" };
+    let user = { name: "Alexander Vance" };
 
     let transactions = [
-      { name: "Harrods Department Store", category: "Shopping", amount: -420.00, date: "Today", icon: "fa-bag-shopping" },
-      { name: "Lloyds Dividend Income", category: "Investment", amount: 1850.00, date: "Yesterday", icon: "fa-building-columns" },
-      { name: "British Airways First Class", category: "Travel", amount: -1250.00, date: "22 Oct", icon: "fa-plane" }
+      { name: "Sotheby's London Auction", category: "Luxury & Art", amount: -2450.00, date: "Today", icon: "fa-gem" },
+      { name: "Executive Wire Transfer", category: "Deposit", amount: 15000.00, date: "Yesterday", icon: "fa-building-columns" },
+      { name: "The Ritz Restaurant", category: "Dining", amount: -480.00, date: "24 Oct", icon: "fa-utensils" }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -405,21 +431,21 @@
       const submitBtn = document.getElementById('authSubmitBtn');
 
       if (mode === 'signup') {
-        signupBtn.className = "pb-3 px-4 font-bold text-sm text-lloyds-green border-b-2 border-lloyds-green w-1/2 text-center";
+        signupBtn.className = "pb-3 px-4 font-bold text-sm text-slate-900 border-b-2 border-ukex-gold w-1/2 text-center";
         loginBtn.className = "pb-3 px-4 font-semibold text-sm text-slate-400 w-1/2 text-center hover:text-slate-600";
         nameGroup.style.display = 'block';
-        submitBtn.innerText = "Create Account & Claim Card";
+        submitBtn.innerText = "Activate Amex Centurion Account";
       } else {
-        loginBtn.className = "pb-3 px-4 font-bold text-sm text-lloyds-green border-b-2 border-lloyds-green w-1/2 text-center";
+        loginBtn.className = "pb-3 px-4 font-bold text-sm text-slate-900 border-b-2 border-ukex-gold w-1/2 text-center";
         signupBtn.className = "pb-3 px-4 font-semibold text-sm text-slate-400 w-1/2 text-center hover:text-slate-600";
         nameGroup.style.display = 'none';
-        submitBtn.innerText = "Log In to UKEX Vault";
+        submitBtn.innerText = "Sign In to Centurion Portal";
       }
     }
 
     function handleAuthSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById('authName').value || "Sarah Jenkins";
+      const name = document.getElementById('authName').value || "Alexander Vance";
       user.name = name;
       
       document.getElementById('userNameDisplay').innerText = name;
@@ -427,7 +453,7 @@
       document.getElementById('userAvatar').innerText = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
       document.getElementById('authModal').classList.add('opacity-0', 'pointer-events-none');
-      showToast(`Welcome back, ${name}`, 'success');
+      showToast(`Welcome to Amex UKEX, ${name}`, 'success');
     }
 
     function logout() {
@@ -440,18 +466,18 @@
       transactions.forEach(t => {
         const isExpense = t.amount < 0;
         const div = document.createElement('div');
-        div.className = "bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between";
+        div.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between";
         div.innerHTML = `
           <div class="flex items-center space-x-3.5">
-            <div class="w-10 h-10 rounded-xl ${isExpense ? 'bg-slate-100 text-slate-700' : 'bg-emerald-50 text-lloyds-green'} flex items-center justify-center">
+            <div class="w-10 h-10 rounded-xl ${isExpense ? 'bg-slate-100 text-slate-800' : 'bg-emerald-50 text-ukex-green'} flex items-center justify-center">
               <i class="fa-solid ${t.icon}"></i>
             </div>
             <div>
-              <h4 class="text-xs font-bold text-slate-800">${t.name}</h4>
+              <h4 class="text-xs font-bold text-slate-900">${t.name}</h4>
               <p class="text-[11px] text-slate-400">${t.category} • ${t.date}</p>
             </div>
           </div>
-          <span class="text-sm font-extrabold ${isExpense ? 'text-slate-800' : 'text-lloyds-green'}">
+          <span class="text-sm font-extrabold ${isExpense ? 'text-slate-900' : 'text-ukex-green'}">
             ${isExpense ? '-' : '+'}${Math.abs(t.amount).toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}
           </span>
         `;
@@ -484,10 +510,10 @@
     function executeTransfer(e) {
       e.preventDefault();
       const val = parseFloat(document.getElementById('transferAmount').value);
-      if (val > currentBalance) { showToast("Insufficient Balance", "error"); return; }
+      if (val > currentBalance) { showToast("Insufficient Funds", "error"); return; }
       currentBalance -= val;
       document.getElementById('mainBalance').innerText = currentBalance.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
-      transactions.unshift({ name: "Direct Payment", category: "Transfer", amount: -val, date: "Just Now", icon: "fa-paper-plane" });
+      transactions.unshift({ name: "Outward Wire", category: "Transfer", amount: -val, date: "Just Now", icon: "fa-paper-plane" });
       renderTransactions();
       closeSendModal();
       confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
@@ -495,17 +521,17 @@
     }
 
     function simulateReceive() {
-      currentBalance += 500;
+      currentBalance += 1000;
       document.getElementById('mainBalance').innerText = currentBalance.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
-      transactions.unshift({ name: "Incoming Payment", category: "Deposit", amount: 500, date: "Just Now", icon: "fa-arrow-down" });
+      transactions.unshift({ name: "Incoming Payment", category: "Deposit", amount: 1000, date: "Just Now", icon: "fa-arrow-down" });
       renderTransactions();
-      showToast("Received £500.00", "success");
+      showToast("Received £1,000.00", "success");
     }
 
     function showToast(msg, type) {
       const c = document.getElementById('toastContainer');
       const t = document.createElement('div');
-      t.className = `p-4 rounded-xl shadow-xl text-xs font-bold text-white ${type === 'success' ? 'bg-lloyds-green' : 'bg-rose-600'} transition-all`;
+      t.className = `p-4 rounded-xl shadow-xl text-xs font-bold text-white ${type === 'success' ? 'bg-slate-900 border border-ukex-gold' : 'bg-rose-600'} transition-all`;
       t.innerText = msg;
       c.appendChild(t);
       setTimeout(() => t.remove(), 3000);
@@ -518,10 +544,10 @@
         data: {
           labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
           datasets: [{
-            label: 'Lloyds Premier Income',
-            data: [5000, 6200, 5800, 7100, 6900, 8200],
-            borderColor: '#006A4E',
-            backgroundColor: 'rgba(0, 106, 78, 0.05)',
+            label: 'Centurion Volume',
+            data: [12000, 15000, 14000, 19000, 18500, 22000],
+            borderColor: '#D4AF37',
+            backgroundColor: 'rgba(212, 175, 55, 0.05)',
             fill: true
           }]
         },
@@ -532,8 +558,8 @@
       new Chart(ctx2, {
         type: 'doughnut',
         data: {
-          labels: ['Shopping', 'Travel', 'Dining'],
-          datasets: [{ data: [45, 35, 20], backgroundColor: ['#006A4E', '#006FCF', '#84BD00'] }]
+          labels: ['Luxury', 'Travel', 'Dining'],
+          datasets: [{ data: [55, 30, 15], backgroundColor: ['#0A1128', '#D4AF37', '#006A4E'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
