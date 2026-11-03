@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UKEX Digital Bank</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            ukex: {
+              bg: '#08090E',
+              card: '#12141F',
+              accent: '#6366F1',
+              neon: '#00F0FF',
+              purple: '#A855F7',
+              pink: '#EC4899',
+              green: '#10B981',
+              border: '#1F2437'
+            }
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 3s infinite alternate',
+            'float': 'float 6s ease-in-out infinite',
+            'shimmer': 'shimmer 2.5s infinite linear'
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%': { boxShadow: '0 0 15px rgba(99, 102, 241, 0.2)' },
+              '100%': { boxShadow: '0 0 35px rgba(0, 240, 255, 0.4)' }
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-8px) rotate(1deg)' }
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #08090E; color: #F3F4F6; overflow-x: hidden; }
+    .glass { background: rgba(18, 20, 31, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.07); }
+    .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    
+    /* Card Flip & 3D Tilt */
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    
+    /* Skeleton Shimmer */
+    .shimmer-bg {
+      background: linear-gradient(90deg, #12141F 25%, #1F2437 50%, #12141F 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-slate-100 selection:bg-ukex-neon selection:text-black">
+
+  <!-- Mobile Outer Shell Container -->
+  <div class="min-h-screen flex items-center justify-center p-0 md:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-ukex-bg to-ukex-bg">
+    
+    <!-- Application Frame -->
+    <div class="w-full max-w-5xl h-screen md:h-[920px] bg-ukex-bg md:rounded-[36px] shadow-2xl shadow-indigo-950/50 border border-slate-800/60 overflow-hidden flex flex-col md:flex-row relative">
+      
+      <!-- Sidebar Navigation (Desktop) -->
+      <aside class="hidden md:flex flex-col w-64 glass border-r border-ukex-border p-6 justify-between z-20">
+        <div>
+          <!-- Brand Logo -->
+          <div class="flex items-center space-x-3 mb-10 px-2">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ukex-accent via-ukex-purple to-ukex-neon flex items-center justify-center shadow-lg shadow-indigo-500/30">
+              <i class="fa-solid font-black text-white text-xl tracking-tighter">X</i>
+            </div>
+            <div>
+              <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-ukex-neon">UKEX</span>
+              <span class="block text-[10px] uppercase tracking-widest text-indigo-400 font-semibold -mt-1">Vault Edition</span>
+            </div>
+          </div>
+
+          <!-- Nav Items -->
+          <nav class="space-y-1.5" id="sidebarNav">
+            <button onclick="switchTab('dashboard')" class="nav-btn active w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-semibold bg-indigo-600/15 text-ukex-neon border border-ukex-neon/20">
+              <i class="fa-solid fa-chart-pie text-base"></i>
+              <span>Dashboard</span>
+            </button>
+            <button onclick="switchTab('analytics')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40">
+              <i class="fa-solid fa-chart-line text-base"></i>
+              <span>Analytics</span>
+            </button>
+            <button onclick="switchTab('cards')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40">
+              <i class="fa-solid fa-credit-card text-base"></i>
+              <span>My Cards</span>
+            </button>
+            <button onclick="openSendModal()" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40">
+              <i class="fa-solid fa-paper-plane text-base"></i>
+              <span>Transfer Money</span>
+            </button>
+            <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40">
+              <i class="fa-solid fa-[#5c60f5] fa-sliders text-base"></i>
+              <span>Security & Control</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="glass p-3 rounded-2xl border border-white/5 flex items-center space-x-3">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-500/50">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-white truncate">Elena Vance</h4>
+            <p class="text-[10px] text-slate-400 truncate">PRO Account • Black Tier</p>
+          </div>
+          <button class="text-slate-400 hover:text-red-400 transition-colors p-1.5"><i class="fa-solid fa-power-off text-xs"></i></button>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- Header -->
+        <header class="h-20 border-b border-ukex-border glass px-6 flex items-center justify-between z-10">
+          <!-- Left: Greeting / Title -->
+          <div>
+            <span id="currentDate" class="text-xs font-medium text-slate-400 uppercase tracking-wider">Tuesday, 24 Oct</span>
+            <h2 id="pageTitle" class="text-xl font-bold text-white tracking-tight">Financial Overview</h2>
+          </div>
+
+          <!-- Right Controls -->
+          <div class="flex items-center space-x-4">
+            <!-- Account Selector -->
+            <select id="accountSelect" onchange="changeAccount(this.value)" class="bg-ukex-card border border-ukex-border text-xs font-semibold text-white px-3 py-2 rounded-xl focus:outline-none focus:border-ukex-accent cursor-pointer shadow-inner">
+              <option value="main">GBP Main • £42,850.50</option>
+              <option value="vault">Vault Savings • £120,400.00</option>
+              <option value="crypto">Crypto Vault • 3.42 BTC</option>
+            </select>
+
+            <!-- Notifications -->
+            <button onclick="toggleNotifications()" class="relative w-10 h-10 rounded-xl bg-slate-800/60 border border-white/5 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all">
+              <i class="fa-regular fa-bell"></i>
+              <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-ukex-neon animate-ping"></span>
+              <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-ukex-neon"></span>
+            </button>
+
+            <!-- Quick Action Mobile Button -->
+            <button onclick="openSendModal()" class="md:hidden bg-gradient-to-r from-ukex-accent to-ukex-purple text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- Dynamic Content Body -->
+        <div id="contentArea" class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar space-y-8">
+          
+          <!-- TAB 1: DASHBOARD CONTENT -->
+          <div id="dashboardTab" class="space-y-8 transition-all duration-500">
+            
+            <!-- Top Grid: Interactive Card & Balance -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              <!-- 3D Interactive Card (Cols 7) -->
+              <div class="lg:col-span-7 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Active Card</span>
+                  <button onclick="flipCard()" class="text-xs font-semibold text-ukex-neon hover:underline flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate text-[10px]"></i>
+                    <span>Flip Details</span>
+                  </button>
+                </div>
+
+                <!-- Card Container with 3D Effect -->
+                <div class="perspective-1000 w-full h-56 sm:h-64 cursor-pointer" onclick="flipCard()">
+                  <div id="creditCard" class="transform-style-3d duration-700 w-full h-full relative rounded-3xl p-6 flex flex-col justify-between shadow-2xl shadow-indigo-950/80 border border-white/20 animate-pulse-glow" style="background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 40%, #311042 100%);">
+                    
+                    <!-- Card Front -->
+                    <div class="backface-hidden absolute inset-0 p-6 flex flex-col justify-between rounded-3xl overflow-hidden">
+                      <div class="absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br from-ukex-neon/20 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+                      <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-gradient-to-br from-ukex-pink/20 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+                      
+                      <!-- Card Top Row -->
+                      <div class="flex justify-between items-start z-10">
+                        <div>
+                          <p class="text-[10px] font-bold tracking-widest uppercase text-slate-400">UKEX Premium</p>
+                          <h3 class="text-lg font-black tracking-wider text-white">FOUNDER EDITION</h3>
+                        </div>
+                        <i class="fa-solid fa-wifi text-slate-300 text-lg rotate-90"></i>
+                      </div>
+
+                      <!-- Chip and Contactless -->
+                      <div class="flex items-center space-x-4 z-10 my-auto">
+                        <div class="w-12 h-9 rounded-lg bg-gradient-to-tr from-yellow-300 via-amber-400 to-yellow-600 p-0.5 shadow-md flex items-center justify-center">
+                          <div class="w-full h-full border border-amber-900/40 rounded flex flex-col justify-between p-1">
+                            <div class="h-0.5 bg-amber-900/30 w-full"></div>
+                            <div class="h-0.5 bg-amber-900/30 w-full"></div>
+                          </div>
+                        </div>
+                        <i class="fa-brands fa-nfc-symbol text-slate-400 text-xl"></i>
+                      </div>
+
+                      <!-- Card Bottom Row -->
+                      <div class="z-10">
+                        <p id="cardNumber" class="font-mono text-lg sm:text-xl font-bold tracking-widest text-slate-100 drop-shadow-md">
+                          •••• •••• •••• 8842
+                        </p>
+                        <div class="flex justify-between items-end mt-4">
+                          <div>
+                            <p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Card Holder</p>
+                            <p class="text-xs font-bold text-white tracking-wide">ELENA VANCE</p>
+                          </div>
+                          <div>
+                            <p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Expires</p>
+                            <p class="text-xs font-bold text-white tracking-wide">08/29</p>
+                          </div>
+                          <div class="w-10 h-6">
+                            <svg viewBox="0 0 36 24" class="w-full h-full opacity-90">
+                              <circle cx="12" cy="12" r="12" fill="#EB001B" />
+                              <circle cx="24" cy="12" r="12" fill="#F79E1B" fill-opacity="0.8" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Card Back -->
+                    <div class="backface-hidden rotate-y-180 absolute inset-0 rounded-3xl bg-slate-900 border border-white/10 overflow-hidden flex flex-col justify-between py-6">
+                      <div class="w-full h-12 bg-black/80 mt-2"></div>
+                      <div class="px-6 space-y-2">
+                        <div class="bg-slate-800 h-10 rounded-lg flex items-center justify-end px-4">
+                          <span class="font-mono text-sm font-bold tracking-widest text-black bg-white px-2 py-0.5 rounded">CVV 931</span>
+                        </div>
+                        <p class="text-[9px] text-slate-500 leading-tight">This card is property of UKEX Bank PLC. Authorized and regulated by the Financial Conduct Authority. If found, return to nearest branch.</p>
+                      </div>
+                      <div class="px-6 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                        <span>SUPPORT: +44 800 999 000</span>
+                        <span>UKEX.IO</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Stats / Balances (Cols 5) -->
+              <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
+                
+                <!-- Main Balance Box -->
+                <div class="glass p-6 rounded-3xl border border-ukex-border flex-1 flex flex-col justify-between relative overflow-hidden group">
+                  <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-ukex-accent/10 rounded-full blur-xl group-hover:bg-ukex-accent/20 transition-all"></div>
+                  <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Liquid Balance</span>
+                    <div class="flex items-baseline space-x-2 mt-2">
+                      <h1 id="balanceDisplay" class="text-4xl font-extrabold tracking-tight text-white">£42,850.50</h1>
+                      <span class="text-sm font-bold text-ukex-green flex items-center"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+14.2%</span>
+                    </div>
+                  </div>
+
+                  <!-- Quick Action Buttons -->
+                  <div class="grid grid-cols-3 gap-3 mt-6">
+                    <button onclick="openSendModal()" class="py-3 px-2 bg-gradient-to-r from-ukex-accent to-indigo-600 hover:opacity-90 rounded-2xl flex flex-col items-center justify-center space-y-1 shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-95">
+                      <i class="fa-solid fa-paper-plane text-white text-sm"></i>
+                      <span class="text-[11px] font-bold text-white">Send</span>
+                    </button>
+                    <button onclick="simulateReceive()" class="py-3 px-2 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 rounded-2xl flex flex-col items-center justify-center space-y-1 transition-all hover:scale-[1.02] active:scale-95">
+                      <i class="fa-solid fa-qrcode text-ukex-neon text-sm"></i>
+                      <span class="text-[11px] font-bold text-slate-200">Request</span>
+                    </button>
+                    <button onclick="openVaultModal()" class="py-3 px-2 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 rounded-2xl flex flex-col items-center justify-center space-y-1 transition-all hover:scale-[1.02] active:scale-95">
+                      <i class="fa-solid fa-vault text-ukex-purple text-sm"></i>
+                      <span class="text-[11px] font-bold text-slate-200">Vaults</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Monthly Spend Tracker -->
+                <div class="glass p-5 rounded-3xl border border-ukex-border flex items-center justify-between">
+                  <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-ukex-pink/10 border border-ukex-pink/20 flex items-center justify-center text-ukex-pink">
+                      <i class="fa-solid fa-fire text-lg"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs font-semibold text-slate-400">Monthly Budget Used</p>
+                      <h4 class="text-sm font-bold text-white">£2,140 / £4,000</h4>
+                    </div>
+                  </div>
+                  <div class="w-20">
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                      <div class="bg-gradient-to-r from-ukex-accent to-ukex-pink h-full rounded-full" style="width: 53.5%"></div>
+                    </div>
+                    <span class="text-[10px] text-right block mt-1 font-bold text-slate-400">53.5%</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Spending Analytics Chart Preview -->
+            <div class="glass p-6 rounded-3xl border border-ukex-border space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-white">Cash Flow Insights</h3>
+                  <p class="text-xs text-slate-400">Income vs Expenses over the last 6 months</p>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="px-3 py-1 rounded-lg bg-indigo-600/30 text-ukex-neon text-xs font-bold border border-ukex-neon/20">Monthly</button>
+                  <button class="px-3 py-1 rounded-lg bg-slate-800 text-slate-400 text-xs font-medium hover:text-white">Weekly</button>
+                </div>
+              </div>
+              <div class="h-64 w-full">
+                <canvas id="overviewChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-white">Recent Transactions</h3>
+                <!-- Filter Pills -->
+                <div class="flex space-x-1.5 bg-slate-900/60 p-1 rounded-xl border border-white/5 text-xs">
+                  <button onclick="filterTransactions('all')" class="tx-filter-btn active px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all">All</button>
+                  <button onclick="filterTransactions('expense')" class="tx-filter-btn px-3 py-1 rounded-lg text-slate-400 font-semibold hover:text-white transition-all">Out</button>
+                  <button onclick="filterTransactions('income')" class="tx-filter-btn px-3 py-1 rounded-lg text-slate-400 font-semibold hover:text-white transition-all">In</button>
+                </div>
+              </div>
+
+              <!-- Transaction List -->
+              <div id="transactionList" class="space-y-3">
+                <!-- JS populated -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 2: ANALYTICS CONTENT (Initially Hidden) -->
+          <div id="analyticsTab" class="space-y-8 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="glass p-6 rounded-3xl border border-ukex-border">
+                <p class="text-xs font-bold text-slate-400 uppercase">Average Daily Spend</p>
+                <h3 class="text-2xl font-black text-white mt-2">£71.30</h3>
+                <span class="text-xs text-ukex-green font-semibold mt-1 inline-block"><i class="fa-solid fa-arrow-down mr-1"></i>8% lower than last month</span>
+              </div>
+              <div class="glass p-6 rounded-3xl border border-ukex-border">
+                <p class="text-xs font-bold text-slate-400 uppercase">Top Category</p>
+                <h3 class="text-2xl font-black text-white mt-2">Dining & Lifestyle</h3>
+                <span class="text-xs text-ukex-purple font-semibold mt-1 inline-block">38% of total spending</span>
+              </div>
+              <div class="glass p-6 rounded-3xl border border-ukex-border">
+                <p class="text-xs font-bold text-slate-400 uppercase">Savings Rate</p>
+                <h3 class="text-2xl font-black text-white mt-2">34.2%</h3>
+                <span class="text-xs text-ukex-neon font-semibold mt-1 inline-block"><i class="fa-solid fa-arrow-up mr-1"></i>On track for yearly goal</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="glass p-6 rounded-3xl border border-ukex-border">
+                <h3 class="text-base font-bold text-white mb-4">Spending by Category</h3>
+                <div class="h-64 flex items-center justify-center">
+                  <canvas id="categoryChart"></canvas>
+                </div>
+              </div>
+              <div class="glass p-6 rounded-3xl border border-ukex-border flex flex-col justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-white mb-2">Smart AI Insights</h3>
+                  <p class="text-xs text-slate-400 mb-4">Powered by UKEX Neural Finance Engine</p>
+                </div>
+                <div class="space-y-3">
+                  <div class="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/20 flex space-x-3 items-start">
+                    <i class="fa-solid fa-brain text-ukex-neon text-lg mt-0.5"></i>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">Subscription Alert</h4>
+                      <p class="text-xs text-slate-400 mt-1">You have 3 active streaming services costing £42/mo. You haven't used Netflix in 18 days.</p>
+                    </div>
+                  </div>
+                  <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/20 flex space-x-3 items-start">
+                    <i class="fa-solid fa-piggy-bank text-ukex-green text-lg mt-0.5"></i>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">Automated Roundups</h4>
+                      <p class="text-xs text-slate-400 mt-1">Spare change roundups saved you £148.50 this month into your 'Tech Fund'.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: MY CARDS & SECURITY -->
+          <div id="cardsTab" class="space-y-8 hidden">
+            <div class="glass p-6 rounded-3xl border border-ukex-border space-y-6">
+              <h3 class="text-base font-bold text-white">Card Security Controls</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Toggle Item 1 -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-ukex-accent">
+                      <i class="fa-solid fa-snowflake"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">Freeze Card</h4>
+                      <p class="text-[11px] text-slate-400">Instantly block new transactions</p>
+                    </div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="freezeToggle" onchange="toggleCardFreeze(this)" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ukex-accent"></div>
+                  </label>
+                </div>
+
+                <!-- Toggle Item 2 -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-ukex-neon/10 flex items-center justify-center text-ukex-neon">
+                      <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">Online Transactions</h4>
+                      <p class="text-[11px] text-slate-400">Allow internet purchases</p>
+                    </div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ukex-accent"></div>
+                  </label>
+                </div>
+
+                <!-- Toggle Item 3 -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-ukex-purple/10 flex items-center justify-center text-ukex-purple">
+                      <i class="fa-solid fa-atm-pin"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">ATM Withdrawals</h4>
+                      <p class="text-[11px] text-slate-400">Enable physical cash access</p>
+                    </div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ukex-accent"></div>
+                  </label>
+                </div>
+
+                <!-- Toggle Item 4 PIN -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-ukex-pink/10 flex items-center justify-center text-ukex-pink">
+                      <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-white">Reveal Card PIN</h4>
+                      <p class="text-[11px] text-slate-400" id="pinDisplay">••••</p>
+                    </div>
+                  </div>
+                  <button onclick="revealPIN()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-xl border border-white/10 transition-all">
+                    Show PIN
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mobile Bottom Navigation Bar -->
+        <nav class="md:hidden glass border-t border-ukex-border grid grid-cols-4 px-2 py-3 z-30">
+          <button onclick="switchTab('dashboard')" class="mobile-nav-btn active flex flex-col items-center space-y-1 text-ukex-neon">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+            <span class="text-[10px] font-bold">Home</span>
+          </button>
+          <button onclick="switchTab('analytics')" class="mobile-nav-btn flex flex-col items-center space-y-1 text-slate-400">
+            <i class="fa-solid fa-chart-line text-lg"></i>
+            <span class="text-[10px] font-bold">Analytics</span>
+          </button>
+          <button onclick="switchTab('cards')" class="mobile-nav-btn flex flex-col items-center space-y-1 text-slate-400">
+            <i class="fa-solid fa-credit-card text-lg"></i>
+            <span class="text-[10px] font-bold">Cards</span>
+          </button>
+          <button onclick="openSendModal()" class="mobile-nav-btn flex flex-col items-center space-y-1 text-slate-400">
+            <i class="fa-solid fa-paper-plane text-lg"></i>
+            <span class="text-[10px] font-bold">Send</span>
+          </button>
+        </nav>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: SEND MONEY -->
+  <div id="sendModal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass bg-ukex-card w-full max-w-md p-6 rounded-3xl border border-white/10 space-y-6 transform scale-95 transition-all duration-300" id="sendModalBox">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-white">Instant Transfer</h3>
+        <button onclick="closeSendModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="transferForm" onsubmit="executeTransfer(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Recipient Name / IBAN</label>
+          <input type="text" required placeholder="e.g. Alex Morgan or GB29 UKEX..." class="w-full bg-slate-900 border border-ukex-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-ukex-accent">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Amount (£)</label>
+          <div class="relative">
+            <span class="absolute left-4 top-3 text-slate-400 font-bold">£</span>
+            <input type="number" id="transferAmount" step="0.01" required placeholder="0.00" class="w-full bg-slate-900 border border-ukex-border rounded-xl pl-9 pr-4 py-3 text-lg font-bold text-white focus:outline-none focus:border-ukex-accent">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Category</label>
+          <select class="w-full bg-slate-900 border border-ukex-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-ukex-accent">
+            <option>General Transfer</option>
+            <option>Bills & Rent</option>
+            <option>Shopping</option>
+            <option>Investments</option>
+          </select>
+        </div>
+
+        <button type="submit" id="sendSubmitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-ukex-accent via-ukex-purple to-ukex-neon text-white font-extrabold text-base tracking-wide shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all">
+          Authorize Payment
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION TOAST CONTAINER -->
+  <div id="toastContainer" class="fixed top-6 right-6 z-50 space-y-3 pointer-events-none"></div>
+
+  <!-- APPLICATION LOGIC & CHARTS SCRIPT -->
+  <script>
+    // State Management
+    let currentBalance = 42850.50;
+    let transactions = [
+      { id: 1, name: "Apple Store London", category: "Tech & Electronics", amount: -1299.00, date: "Today, 14:20", icon: "fa-apple", type: "expense" },
+      { id: 2, name: "Stripe Salary Deposit", category: "Income", amount: 6450.00, date: "Yesterday", icon: "fa-building-columns", type: "income" },
+      { id: 3, name: "Uber Eats", category: "Dining", amount: -34.50, date: "22 Oct", icon: "fa-utensils", type: "expense" },
+      { id: 4, name: "Spotify UK", category: "Subscription", amount: -11.99, date: "20 Oct", icon: "fa-spotify", type: "expense" },
+      { id: 5, name: "Crypto Cashout (BTC)", category: "Investment", amount: 1200.00, date: "18 Oct", icon: "fa-bitcoin", type: "income" }
+    ];
+
+    // Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTransactions(transactions);
+      initCharts();
+    });
+
+    // Render Transactions
+    function renderTransactions(data) {
+      const list = document.getElementById('transactionList');
+      list.innerHTML = '';
+      
+      data.forEach(t => {
+        const isExpense = t.amount < 0;
+        const card = document.createElement('div');
+        card.className = "glass p-4 rounded-2xl border border-white/5 flex items-center justify-between hover:bg-slate-800/40 transition-all duration-300";
+        card.innerHTML = `
+          <div class="flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-xl ${isExpense ? 'bg-slate-800 text-slate-300' : 'bg-emerald-500/10 text-ukex-green'} flex items-center justify-center border border-white/5 text-base">
+              <i class="fa-brands ${t.icon.startsWith('fa-') ? t.icon : ''} ${!t.icon.startsWith('fa-') ? 'fa-solid ' + t.icon : ''}"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">${t.name}</h4>
+              <p class="text-[11px] text-slate-400">${t.category} • ${t.date}</p>
+            </div>
+          </div>
+          <span class="text-sm font-extrabold ${isExpense ? 'text-white' : 'text-ukex-green'}">
+            ${isExpense ? '-' : '+'}${Math.abs(t.amount).toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}
+          </span>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // Filter Transactions
+    function filterTransactions(type) {
+      document.querySelectorAll('.tx-filter-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-indigo-600', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+      event.target.classList.add('active', 'bg-indigo-600', 'text-white');
+      event.target.classList.remove('text-slate-400');
+
+      if (type === 'all') renderTransactions(transactions);
+      else renderTransactions(transactions.filter(t => t.type === type));
+    }
+
+    // Tab Navigation Switcher
+    function switchTab(tabName) {
+      const tabs = ['dashboard', 'analytics', 'cards'];
+      tabs.forEach(t => {
+        document.getElementById(t + 'Tab').classList.add('hidden');
+      });
+      document.getElementById(tabName + 'Tab').classList.remove('hidden');
+
+      // Update sidebar styling
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600/15', 'text-ukex-neon', 'border', 'border-ukex-neon/20');
+        btn.classList.add('text-slate-400');
+      });
+      
+      const titles = { dashboard: 'Financial Overview', analytics: 'Deep Analytics', cards: 'Card Security' };
+      document.getElementById('pageTitle').innerText = titles[tabName];
+    }
+
+    // Card 3D Flip
+    let isFlipped = false;
+    function flipCard() {
+      const card = document.getElementById('creditCard');
+      isFlipped = !isFlipped;
+      card.style.transform = isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    }
+
+    // Send Modal Control
+    function openSendModal() {
+      const modal = document.getElementById('sendModal');
+      const box = document.getElementById('sendModalBox');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    }
+
+    function closeSendModal() {
+      const modal = document.getElementById('sendModal');
+      const box = document.getElementById('sendModalBox');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+    }
+
+    // Execute Money Transfer
+    function executeTransfer(e) {
+      e.preventDefault();
+      const amountInput = document.getElementById('transferAmount');
+      const val = parseFloat(amountInput.value);
+
+      if (val > currentBalance) {
+        showToast("Insufficient Balance!", "error");
+        return;
+      }
+
+      currentBalance -= val;
+      document.getElementById('balanceDisplay').innerText = currentBalance.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
+
+      // Add to transaction list
+      transactions.unshift({
+        id: Date.now(),
+        name: "Transfer Payment",
+        category: "Transfer",
+        amount: -val,
+        date: "Just Now",
+        icon: "fa-paper-plane",
+        type: "expense"
+      });
+
+      renderTransactions(transactions);
+      closeSendModal();
+      amountInput.value = '';
+
+      // Confetti Celebration Particle Effect
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      showToast(`Successfully transferred £${val.toFixed(2)}`, "success");
+    }
+
+    // Simulate Receive Funds
+    function simulateReceive() {
+      const rec = 250.00;
+      currentBalance += rec;
+      document.getElementById('balanceDisplay').innerText = currentBalance.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
+
+      transactions.unshift({
+        id: Date.now(),
+        name: "Incoming Quick Transfer",
+        category: "Deposit",
+        amount: rec,
+        date: "Just Now",
+        icon: "fa-arrow-down-left",
+        type: "income"
+      });
+
+      renderTransactions(transactions);
+      showToast("Received £250.00 instant payment!", "success");
+    }
+
+    // Freeze Card Switch
+    function toggleCardFreeze(el) {
+      const card = document.getElementById('creditCard');
+      if (el.checked) {
+        card.style.filter = "grayscale(100%) opacity(0.6)";
+        showToast("Card has been frozen", "info");
+      } else {
+        card.style.filter = "none";
+        showToast("Card unfrozen", "success");
+      }
+    }
+
+    // PIN Reveal
+    function revealPIN() {
+      const pin = document.getElementById('pinDisplay');
+      pin.innerText = "8492";
+      setTimeout(() => { pin.innerText = "••••"; }, 3000);
+    }
+
+    // Toast Notification System
+    function showToast(msg, type = "info") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const colors = {
+        success: "bg-emerald-950/90 border-emerald-500/40 text-emerald-300",
+        error: "bg-rose-950/90 border-rose-500/40 text-rose-300",
+        info: "bg-indigo-950/90 border-indigo-500/40 text-ukex-neon"
+      };
+
+      toast.className = `glass p-4 rounded-2xl border shadow-xl flex items-center space-x-3 text-xs font-bold ${colors[type]} transition-all duration-500 transform translate-x-12 opacity-0 pointer-events-auto`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${msg}</span>`;
+
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-x-12', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-12');
+        setTimeout(() => toast.remove(), 500);
+      }, 3500);
+    }
+
+    // Initialize Chart.js
+    function initCharts() {
+      // Line Chart Overview
+      const ctx1 = document.getElementById('overviewChart').getContext('2d');
+      new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [{
+            label: 'Income',
+            data: [4200, 5100, 4800, 6200, 5900, 6450],
+            borderColor: '#00F0FF',
+            backgroundColor: 'rgba(0, 240, 255, 0.05)',
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Expenses',
+            data: [2100, 2800, 2300, 3100, 2700, 2140],
+            borderColor: '#EC4899',
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94A3B8', font: { family: 'Plus Jakarta Sans' } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748B' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748B' } }
+          }
+        }
+      });
+
+      // Category Donut Chart
+      const ctx2 = document.getElementById('categoryChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Dining', 'Tech', 'Subscriptions', 'Shopping', 'Travel'],
+          datasets: [{
+            data: [38, 25, 12, 15, 10],
+            backgroundColor: ['#6366F1', '#00F0FF', '#EC4899', '#A855F7', '#10B981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'right', labels: { color: '#94A3B8' } } }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
